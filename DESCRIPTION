@@ -1,11 +1,10 @@
 Package: dbcon
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Title: R package for wrapping DBI connections
+Version: 0.1.1
+Author: Václav Hausenblas
+Maintainer: Václav Hausenblas <vaclav.hausenblas@gmai.com>
+Description: The goal of dbcon is to simplify development of R packages that serve as interfaces to specific DBs.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
