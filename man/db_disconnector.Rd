@@ -4,7 +4,7 @@
 \alias{db_disconnector}
 \title{Create DBI disconnetor}
 \usage{
-db_disconnector(con_name, checker)
+db_disconnector(con_name, checker = con_checker(con_name = con_name))
 }
 \description{
 Create DBI disconnetor

@@ -4,7 +4,7 @@
 \alias{con_checker}
 \title{Create connection checker}
 \usage{
-con_checker(con_name, dbname)
+con_checker(con_name)
 }
 \description{
 Create connection checker

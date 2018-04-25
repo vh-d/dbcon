@@ -25,21 +25,17 @@ con_exists <- function(con_name) {
 }
 
 #' Is the connection open?
-con_is_open <- function(con_name, dbname) {
-  if (dbcon_env_exists() &&
-      con_exists(con_name) &&
-      tryCatch(DBI::dbGetInfo(.GlobalEnv$.dbcon[[con_name]]),
-               error = function(e) return(list(dbname = "")))$dbname == dbname)
-    return(TRUE)
-  # else:
-  return(FALSE)
+con_is_open <- function(con_name) {
+  dbcon_env_exists() &&
+    con_exists(con_name) &&
+    tryCatch(is.list(DBI::dbGetInfo(.GlobalEnv$.dbcon[[con_name]])),
+             error = function(e) return(FALSE))
 }
 
 #' Create connection checker
-#' @export
-con_checker <- function(con_name, dbname) {
+con_checker <- function(con_name) {
   function() {
-    con_is_open(con_name, dbname)
+    con_is_open(con_name)
   }
 }
 
@@ -47,7 +43,7 @@ con_checker <- function(con_name, dbname) {
 #' @export
 db_connector <- function(con_name,
                          def_driver,
-                         checker,
+                         checker = con_checker(con_name = con_name),
                          def_args = NULL) {
 
   function(...,
@@ -84,7 +80,7 @@ db_connector <- function(con_name,
 # todo: more granular testing: 1. environment exists 2. connection exists 3. connection is open/closed
 #' Create DBI disconnetor
 #' @export
-db_disconnector <- function(con_name, checker) {
+db_disconnector <- function(con_name, checker = con_checker(con_name = con_name)) {
   function() {
     if (dbcon_env_exists()) {
       if (con_exists(con_name)) {

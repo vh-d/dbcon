@@ -4,7 +4,7 @@
 \alias{con_is_open}
 \title{Is the connection open?}
 \usage{
-con_is_open(con_name, dbname)
+con_is_open(con_name)
 }
 \description{
 Is the connection open?
