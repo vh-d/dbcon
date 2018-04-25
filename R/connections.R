@@ -17,6 +17,15 @@ dbcon_env_exists <- function(){
   return(FALSE)
 }
 
+#' Get/find a connection by name
+#' @export
+get_con <- function(con_name) {
+  if (dbcon_env_exists()) {
+    if (exists(con_name, envir = .GlobalEnv[[".dbcon"]])) {
+      return(.GlobalEnv[[".dbcon"]][[con_name]])
+    } else stop("Connection ", con_name, "not found.")
+  } else stop("Connection ", con_name, "not found. In particular '.dbcon' environment does not exist (yet)!")
+}
 
 #' Check whether a connections exists
 con_exists <- function(con_name) {
