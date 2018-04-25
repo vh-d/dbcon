@@ -3,8 +3,8 @@
 test_con <- function(dbcon) {
   return(
     try(
-      dbGetQuery(conn      = dbcon,
-                 statement = "SELECT 1 FROM DUAL"), # todo: some more universal select for any type db?
+      DBI::dbGetQuery(conn      = dbcon,
+                      statement = "SELECT 1 FROM DUAL"), # todo: some more universal select for any type db?
       silent = TRUE)
     == 1)
 }
@@ -28,8 +28,8 @@ con_exists <- function(con_name) {
 con_is_open <- function(con_name, dbname) {
   if (dbcon_env_exists() &&
       con_exists(con_name) &&
-      tryCatch(dbGetInfo(.GlobalEnv$.dbcon[[con_name]]),
-                error = function(e) return(list(dbname = "")))$dbname == dbname)
+      tryCatch(DBI::dbGetInfo(.GlobalEnv$.dbcon[[con_name]]),
+               error = function(e) return(list(dbname = "")))$dbname == dbname)
     return(TRUE)
   # else:
   return(FALSE)
@@ -70,7 +70,7 @@ db_connector <- function(con_name,
 
     # try to connect
     # todo: exceptions
-    tryCatch(new_con <- do.call(dbConnect, args = con_args),
+    tryCatch(new_con <- do.call(DBI::dbConnect, args = con_args),
              error = function(e) stop("Error while connecting to ", con_name, ": ", e))
 
     # save it to a known environment
@@ -90,7 +90,7 @@ db_disconnector <- function(con_name, checker) {
       if (con_exists(con_name)) {
         if (checker()) {
           message("Closing connection to ", con_name, " ...")
-          try(dbDisconnect(conn = .GlobalEnv$.dbcon[[con_name]]))
+          try(DBI::dbDisconnect(conn = .GlobalEnv$.dbcon[[con_name]]))
           message("ok")
 
           return(TRUE)
