@@ -68,10 +68,10 @@ db_connector <- function(con_name,
     con_args <- list(drv = drv)
     # user's new arguments
     users_args <- list(...)
-    con_args <- append(con_args, users_args)
+    con_args <- c(con_args, users_args)
     # developer's default arguments if not in conflict
     # todo: prevent conflicts by matching (the same way R does)
-    if (!is.null(def_args)) con_args <- append(con_args, def_args[!(names(def_args) %in% names(users_args))])
+    if (!is.null(def_args)) con_args <- c(con_args, def_args[setdiff(names(def_args), names(users_args))])
 
     # try to connect
     # todo: exceptions
