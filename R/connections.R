@@ -89,27 +89,28 @@ db_connector <- function(con_name,
 # todo: more granular testing: 1. environment exists 2. connection exists 3. connection is open/closed
 #' Create DBI disconnetor
 #' @export
-db_disconnector <- function(con_name, checker = con_checker(con_name = con_name)) {
+db_disconnector <- function(con_name,
+                            checker = con_checker(con_name = con_name)) {
   function() {
     if (dbcon_env_exists()) {
       if (con_exists(con_name)) {
         if (checker()) {
-          message("Closing connection to ", con_name, " ...")
+          message("Closing connection to ", con_name, " ...", appendLF = FALSE)
           try(DBI::dbDisconnect(conn = .GlobalEnv$.dbcon[[con_name]]))
           message("ok")
 
-          return(TRUE)
+          return(invisible(TRUE))
         } else {
           message("Connection to ", con_name, " already closed.")
-          return(TRUE)
+          return(invisible(TRUE))
         }
       } else {
         message("Connection to ", con_name, " not found!")
-        return(FALSE)
+        return(invisible(FALSE))
       }
     } else {
       message("Connection to ", con_name, " not found!")
-      return(FALSE)
+      return(invisible(FALSE))
     }
   }
 }
