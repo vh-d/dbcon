@@ -33,12 +33,18 @@ con_exists <- function(con_name) {
   return(FALSE)
 }
 
+is_nonempty_list <- function(x) {
+  is.list(x) && length(x) > 0
+}
+
 #' Is the connection open?
+#' @export
 con_is_open <- function(con_name) {
   dbcon_env_exists() &&
     con_exists(con_name) &&
-    tryCatch(is.list(DBI::dbGetInfo(.GlobalEnv$.dbcon[[con_name]])),
-             error = function(e) return(FALSE))
+    tryCatch(
+      is_nonempty_list(DBI::dbGetInfo(get_con(con_name))) || DBI::dbIsValid(get_con(con_name)),
+      error = function(e) return(FALSE))
 }
 
 #' Create connection checker
