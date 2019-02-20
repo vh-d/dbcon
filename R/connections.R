@@ -54,12 +54,25 @@ con_checker <- function(con_name) {
   }
 }
 
-# Create function that checks for an existing DB connection and creates/open a new one if its not found open
+#' Creates function that checks for an existing DB connection and creates/open a new one if its not found open
+#' @param con_name     name of the connection
+#' @param def_driver   default DBI driver
+#' @param checker      function that can check the connection (returns TRUE or FALSE)
+#' @param def_args     list of default arguments (such as connection parameters, user name etc...) - see details
+#' @param def_args_nse if TRUE (default) arguments in \code{def_args} get evaluated every time the new connector function is called. This prevents situations when e.g. connector asks for a password and gets incorrect passwrod. Connectors created by \code{db_connector()} evaluates default arguments for the first time it is called and stores them (including the incorrect password) in the closure environment of the connector function and every new call of the connector no longer asks for password.
+#'
+#' @details
+#' @rdname db_connector
 #' @export
-db_connector <- function(con_name,
-                         def_driver,
-                         checker = con_checker(con_name = con_name),
-                         def_args = NULL) {
+db_connector <- function(
+  con_name,
+  def_driver,
+  checker = con_checker(con_name = con_name),
+  def_args = NULL,
+  def_args_nse = TRUE) {
+
+  # store default arguments before evaluation
+  if (def_args_nse) def_args <- substitute(def_args)
 
   function(...,
            drv = def_driver) {
@@ -72,12 +85,19 @@ db_connector <- function(con_name,
 
     # arguments:
     con_args <- list(drv = drv)
+
     # user's new arguments
     users_args <- list(...)
+
+    # concatenate
     con_args <- c(con_args, users_args)
+
     # developer's default arguments if not in conflict
     # todo: prevent conflicts by matching (the same way R does)
-    if (!is.null(def_args)) con_args <- c(con_args, def_args[setdiff(names(def_args), names(users_args))])
+    if (!is.null(def_args)) {
+      def_args_evaluated <- if (def_args_nse) eval(def_args) else def_args
+      con_args <- c(con_args, def_args_evaluated[setdiff(names(def_args_evaluated), names(users_args))])
+    }
 
     # try to connect
     # todo: exceptions
@@ -91,6 +111,7 @@ db_connector <- function(con_name,
     return(invisible(TRUE))
   }
 }
+
 
 # todo: more granular testing: 1. environment exists 2. connection exists 3. connection is open/closed
 #' Create DBI disconnetor
@@ -145,3 +166,4 @@ odbc_driver_lookup <- function(pref_drivers, pattern = "") {
 
   stop("No suitable ODBC driver found!")
 }
+
