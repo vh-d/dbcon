@@ -114,3 +114,28 @@ db_disconnector <- function(con_name,
     }
   }
 }
+
+
+#' Looks up best available odbc driver from given character vector of ODBC driver names.
+#' @param pref_drivers
+#' @param pattern
+#'
+#' @export
+odbc_driver_lookup <- function(pref_drivers, pattern = "") {
+  if (!requireNamespace("odbc", quietly = TRUE)) stop("'odbc' package not available!")
+
+  drivers_available <- unique(odbc::odbcListDrivers()$name)
+  drivers_found     <- which(pref_drivers %in% drivers_available)
+
+  if (length(drivers_found)) {
+    return(pref_drivers[min(drivers_found)])
+  } else {
+    drivers_found <- which(grepl(pattern = pattern, drivers_available, ignore.case = TRUE))
+    if (length(drivers_found)) {
+      warning("None of the preferred drivers were found. Trying '", drivers_available[min(drivers_found)], "'")
+      return(drivers_available[min(drivers_found)])
+    }
+  }
+
+  stop("No suitable ODBC driver found!")
+}
