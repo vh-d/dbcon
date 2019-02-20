@@ -1,7 +1,7 @@
 Package: dbcon
 Type: Package
 Title: R package for wrapping DBI connections
-Version: 0.1.1
+Version: 0.1.2
 Author: Václav Hausenblas
 Maintainer: Václav Hausenblas <vaclav.hausenblas@gmai.com>
 Description: The goal of dbcon is to simplify development of R packages that serve as interfaces to specific DBs.
@@ -9,6 +9,6 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Imports: 
     DBI
